@@ -4,6 +4,9 @@ var studentBlockInputs = new Array(10);
 var studentHasABInput;
 var studentHasAB = true;
 var studentBlockInputRows = new Array(10);
+var currentWeekDate;
+var scheduleDisplayParentElement;
+var blockInputVisible = false;
 
 /** returns true if successfully loaded and false if not */
 function loadBlocks() {
@@ -94,10 +97,13 @@ function calculatePlease() {
 
 function loadHandler() {
     initUiElements();
+    var myDate = new Date() >= yearSchedule.begin.day? new Date() : yearSchedule.begin.day;
+    currentWeekDate = new Date(myDate.getFullYear(), myDate.getMonth(), myDate.getDate() - myDate.getDay() + 1);
+    console.log(currentWeekDate);
     var blocksLoaded = loadBlocks();
     if (blocksLoaded) {
         fillBlocksInInput();
-        document.body.appendChild(generateTableWithBlocks(new Date() >= yearSchedule.begin.day? new Date() : yearSchedule.begin.day));
+        regenerateScheduleDisplay();
     } else {
         setBlockInputVisible(true);
     }
@@ -109,10 +115,12 @@ function initUiElements() {
         studentBlockInputRows[i - 1] = document.getElementById("schedule-input-row-" + i);
     }
     studentHasABInput = document.getElementById("block-input-hasab");
+    scheduleDisplayParentElement = document.getElementById("schedule-display");
 }
 
 function setBlockInputVisible(visible) {
     document.getElementById("schedule-input").style.display = visible? "" : "none";
+    blockInputVisible = visible;
 }
 
 function fillBlocksInInput() {
@@ -133,6 +141,26 @@ function blocksSubmitHandler() {
     }
     studentHasAB = studentHasABInput.checked;
     saveBlocks();
+    regenerateScheduleDisplay();
+}
+
+function nextWeek() {
+    currentWeekDate = new Date(currentWeekDate.getFullYear(), currentWeekDate.getMonth(), currentWeekDate.getDate() + 7);
+    regenerateScheduleDisplay();
+}
+
+function previousWeek() {
+    currentWeekDate = new Date(currentWeekDate.getFullYear(), currentWeekDate.getMonth(), currentWeekDate.getDate() - 7);
+    regenerateScheduleDisplay();
+}
+
+function regenerateScheduleDisplay() {
+    var newTableElem = generateTableWithBlocks(currentWeekDate);
+    if (scheduleDisplayParentElement.firstChild == null) {
+        scheduleDisplayParentElement.appendChild(newTableElem);
+    } else {
+        scheduleDisplayParentElement.replaceChild(newTableElem, scheduleDisplayParentElement.firstChild);
+    }
 }
 
 window.onload = loadHandler;
