@@ -29,6 +29,10 @@ function getBlocksOnDay(date, hasAb) {
     return morningClasses.concat(afternoonClasses);
 }
 
+function getAfternoonRotationsOnDay(date) {
+    return getAfternoonRotationsOnWeekType(getWeekTypeOnDay(date));
+}
+
 function getAfternoonRotationsOnWeekType(type) {
     if (type == 0) {
         return [0, 1, 2]; //pink, gray, green

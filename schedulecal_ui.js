@@ -26,10 +26,12 @@ function saveBlocks() {
 
 function generateTableWithBlocks(beginDate) {
     var timeTables = new Array(5);
+    var nowDate = new Date();
     for (var i = 0; i < 5; i++) {
         var date = new Date(beginDate.getFullYear(), beginDate.getMonth(), beginDate.getDate() + i);
         var timeTable = getBlocksOnDay(date, studentHasAB);
-        timeTables[i] = { date: date, timeTable: timeTable};
+        var afternoonRotations = getAfternoonRotationsOnDay(date);
+        timeTables[i] = { date: date, timeTable: timeTable, afternoonRotations: afternoonRotations};
         //console.log(timeTables[i]);
     }
     var tableElem = document.createElement("table");
@@ -40,23 +42,36 @@ function generateTableWithBlocks(beginDate) {
             var tdElem = document.createElement("td");
             var date = timeTables[c].date;
             var timeTable = timeTables[c].timeTable;
+            var afternoonRotations = timeTables[c].afternoonRotations;
             //console.log(timeTable);
             var day2 = timeTable.length == 6;
             var blockIdName;
             if (r == 0) {
                 tdElem.textContent = (date.getMonth() + 1) + "/" + date.getDate();
+                tdElem.className = "schedule-table-date";
+                if (date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && 
+                    date.getDate() == nowDate.getDate()) {
+                    tdElem.className += " schedule-table-today";
+                }
             } else if (r == 1 || r == 2) {
                 tdElem.textContent = getBlockAndClassNameForId(timeTable[r - 1]);
+                tdElem.className = "schedule-table-block-" + timeTable[r - 1];
             } else if (r == 3) {
                 tdElem.textContent = "Recess";
+                tdElem.className = "schedule-table-recess";
             } else if (r == 4) {
                 tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[2]) : "Advisory";
+                tdElem.className = day2? "schedule-table-block-" + timeTable[2] : "schedule-table-advisory";
             } else if (r == 5) {
                 tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[3]) : getBlockAndClassNameForId(timeTable[2]);
+                tdElem.className = "schedule-table-block-" + (day2? timeTable[3] : timeTable[2]) + " schedule-afternoon-rotation-" + afternoonRotations[0];
             } else if (r == 6) {
                 tdElem.textContent = "Lunch";
+                tdElem.className = "schedule-table-lunch";
             } else if (r == 7 || r == 8) {
                 tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[r - 3]) : getBlockAndClassNameForId(timeTable[r - 4]);
+                tdElem.className = "schedule-table-block-" + (day2? timeTable[r - 3] : timeTable[r - 4]) + 
+                    " schedule-afternoon-rotation-" + afternoonRotations[r - 6];
             }
             rowElem.appendChild(tdElem);
         }
