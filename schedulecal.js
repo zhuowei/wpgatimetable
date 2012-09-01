@@ -1,4 +1,5 @@
 "use strict";
+
 var yearSchedule = {
     begin: {
         year: 2012,
@@ -8,13 +9,17 @@ var yearSchedule = {
 /* classes IDs begin with 1 */
 var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 3, 6, 4, 5]];
 
-function getBlocksOnDay(date) {
+function getBlocksOnDay(date, hasAb) {
     var dayWeek = date.getDay();
     if (dayWeek == 0 || dayWeek == 6) //Weekends
         return null;
     var dayWeekZeroIndex = dayWeek - 1;
     var dayType = dayWeekZeroIndex % 2;
     var morningClasses = dayType == 0? [1, 2] : [8, 9, 10];
+    if (hasAb && dayType == 1) {
+        morningClasses = dayWeek == 2? [8, 8, 9] : [9, 9, 8];
+    }
+
     var weekType = getWeekTypeOnDay(date);
     //console.log("weektype: " + weekType);
     var afternoonRotType = getAfternoonRotationsOnWeekType(weekType);
