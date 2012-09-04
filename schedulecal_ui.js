@@ -7,6 +7,7 @@ var studentBlockInputRows = new Array(10);
 var currentWeekDate;
 var scheduleDisplayParentElement;
 var blockInputVisible = false;
+var debugDate;
 
 /** returns true if successfully loaded and false if not */
 function loadBlocks() {
@@ -26,7 +27,7 @@ function saveBlocks() {
 
 function generateTableWithBlocks(beginDate) {
     var timeTables = new Array(5);
-    var nowDate = new Date();
+    var nowDate = debugDate != null? debugDate : new Date();
     for (var i = 0; i < 5; i++) {
         var date = new Date(beginDate.getFullYear(), beginDate.getMonth(), beginDate.getDate() + i);
         var timeTable = getBlocksOnDay(date, studentHasAB);
@@ -45,6 +46,9 @@ function generateTableWithBlocks(beginDate) {
             var afternoonRotations = timeTables[c].afternoonRotations;
             //console.log(timeTable);
             var day2 = timeTable.length == 6;
+            var blockTimes = day2? blockTimesDay2 : blockTimesDay1;
+            var currentBlock = equalDates(nowDate, date) ? getCurrentBlock(nowDate) : null;
+            //if (currentBlock != null) console.log(currentBlock);
             var blockIdName;
             if (r == 0) {
                 tdElem.textContent = (date.getMonth() + 1) + "/" + date.getDate();
@@ -54,29 +58,57 @@ function generateTableWithBlocks(beginDate) {
                     tdElem.className += " schedule-table-today";
                 }
             } else if (r == 1 || r == 2) {
-                tdElem.textContent = getBlockAndClassNameForId(timeTable[r - 1]);
-                tdElem.className = "schedule-table-block-" + timeTable[r - 1];
+                buildElem(timeTable, blockTimes, tdElem, r - 1, currentBlock);
             } else if (r == 3) {
-                tdElem.textContent = "Recess";
+                tdElem.textContent = "Recess"
+                tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, "recess");
                 tdElem.className = "schedule-table-recess";
+                if (currentBlock == "recess") {
+                    tdElem.className += " schedule-table-block-current";
+                }
             } else if (r == 4) {
-                tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[2]) : "Advisory";
+                tdElem.textContent = (day2? getBlockAndClassNameForId(timeTable[2]) : "Advisory");
+                tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, day2? 2 : "advisory");
                 tdElem.className = day2? "schedule-table-block-" + timeTable[2] : "schedule-table-advisory";
+                if ((day2 && currentBlock == "2") || (!day2 && currentBlock == "advisory")) {
+                    tdElem.className += " schedule-table-block-current";
+                }
             } else if (r == 5) {
-                tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[3]) : getBlockAndClassNameForId(timeTable[2]);
+                tdElem.textContent = (day2? getBlockAndClassNameForId(timeTable[3]) : getBlockAndClassNameForId(timeTable[2])); 
+                tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, day2? "3" : "2");
                 tdElem.className = "schedule-table-block-" + (day2? timeTable[3] : timeTable[2]) + " schedule-afternoon-rotation-" + afternoonRotations[0];
+                if ((day2 && currentBlock == "3") || (!day2 && currentBlock == "2")) {
+                    tdElem.className += " schedule-table-block-current";
+                }
             } else if (r == 6) {
                 tdElem.textContent = "Lunch";
+                tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, "lunch");
                 tdElem.className = "schedule-table-lunch";
+                if (currentBlock == "lunch") {
+                    tdElem.className += " schedule-table-block-current";
+                }
             } else if (r == 7 || r == 8) {
-                tdElem.textContent = day2? getBlockAndClassNameForId(timeTable[r - 3]) : getBlockAndClassNameForId(timeTable[r - 4]);
+                tdElem.textContent = (day2? getBlockAndClassNameForId(timeTable[r - 3]) : getBlockAndClassNameForId(timeTable[r - 4])); 
+                tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, r - (day2? 3 : 4));
                 tdElem.className = "schedule-table-block-" + (day2? timeTable[r - 3] : timeTable[r - 4]) + 
                     " schedule-afternoon-rotation-" + afternoonRotations[r - 6];
+                if (currentBlock == (r - (day2? 3 : 4)).toString()) {
+                    tdElem.className += " schedule-table-block-current";
+                }
             }
             rowElem.appendChild(tdElem);
         }
     }
     return tableElem;
+
+    function buildElem(timeTable, blockTimes, tdElem, block, currentBlock) {
+        tdElem.textContent = getBlockAndClassNameForId(timeTable[block]);
+        tdElem.innerHTML += "<br>" + formatBlockTimes(blockTimes, block);
+        tdElem.className = "schedule-table-block-" + timeTable[block];
+        if (block.toString() == currentBlock) {
+            tdElem.className += " schedule-table-block-current";
+        }
+    }
 }
 
 function getBlockNameForId(id) {
@@ -85,6 +117,11 @@ function getBlockNameForId(id) {
         if (id == 9) return "B";
     }
     return id.toString();
+}
+
+function formatBlockTimes(blockTimes, name) {
+    var ob = blockTimes[name.toString()];
+    return ob.begin + "-" + ob.end;
 }
 
 function getBlockAndClassNameForId(id) {
@@ -114,7 +151,7 @@ function loadHandler() {
     initUiElements();
     var myDate = new Date() >= yearSchedule.begin.day? new Date() : yearSchedule.begin.day;
     currentWeekDate = new Date(myDate.getFullYear(), myDate.getMonth(), myDate.getDate() - myDate.getDay() + 1);
-    console.log(currentWeekDate);
+    //console.log(currentWeekDate);
     var blocksLoaded = loadBlocks();
     if (blocksLoaded) {
         fillBlocksInInput();
@@ -176,6 +213,11 @@ function regenerateScheduleDisplay() {
     } else {
         scheduleDisplayParentElement.replaceChild(newTableElem, scheduleDisplayParentElement.firstChild);
     }
+}
+
+function equalDates(date, nowDate) {
+    return date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && 
+                    date.getDate() == nowDate.getDate();
 }
 
 window.onload = loadHandler;

@@ -9,6 +9,59 @@ var yearSchedule = {
 /* classes IDs begin with 1 */
 var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 3, 6, 4, 5]];
 
+var blockTimesDay1 = 
+    {"0" : {
+        "begin": "8:20",
+        "end": "9:30"},
+     "1" : {
+        "begin": "9:30",
+        "end": "10:30"},
+     "recess" : {
+        "begin": "10:40",
+        "end": "10:50"},
+     "advisory" : {
+        "begin": "10:50",
+        "end": "11:10"},
+     "2" : {
+        "begin": "11:10",
+        "end": "12:20"},
+     "lunch" : {
+        "begin": "12:20",
+        "end": "13:10"},
+     "3" : {
+        "begin": "13:10",
+        "end": "14:20"},
+     "4" : {
+        "begin": "14:20",
+        "end": "15:30"}
+     };
+var blockTimesDay2 = 
+    {"0" : {
+        "begin": "8:20",
+        "end": "9:20"},
+     "1" : {
+        "begin": "9:20",
+        "end": "10:20"},
+     "recess" : {
+        "begin": "10:20",
+        "end": "10:40"},
+     "2" : {
+        "begin": "10:40",
+        "end": "11:40"},
+     "3" : {
+        "begin": "11:40",
+        "end": "12:40"},
+     "lunch" : {
+        "begin": "12:40",
+        "end": "13:30"},
+     "4" : {
+        "begin": "13:30",
+        "end": "14:30"},
+     "5" : {
+        "begin": "14:30",
+        "end": "15:30"}
+     };
+
 function getBlocksOnDay(date, hasAb) {
     var dayWeek = date.getDay();
     if (dayWeek == 0 || dayWeek == 6) //Weekends
@@ -54,5 +107,31 @@ function getWeekTypeOnDay(date) {
 function getWeeksElapsedFromTo(origDate, date) {
     //TODO vacations
     return Math.floor((date.getTime() - origDate.getTime()) / 604800000); //1000 * 60 * 60 * 24 *7
+}
+
+function getCurrentBlock(date) {
+    var dayWeek = date.getDay();
+    if (dayWeek == 0 || dayWeek == 6) //Weekends
+        return null;
+    var dayWeekZeroIndex = dayWeek - 1;
+    var dayType = dayWeekZeroIndex % 2;
+    
+    var blockTimes = dayType == 1? blockTimesDay2 : blockTimesDay1;
+    var curHour = date.getHours(); 
+    var curMinute = date.getMinutes();
+    //console.log(curHour + ":" + curMinute);
+    var curTotalMinutes = (curHour * 60) + curMinute;
+    //console.log(date + ": " + curTotalMinutes);
+    for (var i in blockTimes) {
+        var beginTime = blockTimes[i].begin.split(":");
+        var beginTimeMins = (parseInt(beginTime[0]) * 60) + parseInt(beginTime[1]);
+        var endTime = blockTimes[i].end.split(":");
+        var endTimeMins = (parseInt(endTime[0]) * 60) + parseInt(endTime[1]);
+        //console.log(i + ":" + beginTimeMins + ":" + endTimeMins);
+        if (curTotalMinutes >= beginTimeMins && curTotalMinutes <= endTimeMins) {
+            return i;
+        }
+    }
+    return null;
 }
 

@@ -50,3 +50,11 @@ body {
     background-color: black;
     color: white;
 }
+
+.schedule-table-block-current {
+    font-weight: bold;
+}
+
+.schedule-table-today {
+    font-weight: bold;
+}
