@@ -8,6 +8,9 @@ var currentWeekDate;
 var scheduleDisplayParentElement;
 var blockInputVisible = false;
 var debugDate;
+var blocksLoaded;
+var refreshTimer;
+var oldCurrentBlock;
 
 /** returns true if successfully loaded and false if not */
 function loadBlocks() {
@@ -152,13 +155,16 @@ function loadHandler() {
     var myDate = new Date() >= yearSchedule.begin.day? new Date() : yearSchedule.begin.day;
     currentWeekDate = new Date(myDate.getFullYear(), myDate.getMonth(), myDate.getDate() - myDate.getDay() + 1);
     //console.log(currentWeekDate);
-    var blocksLoaded = loadBlocks();
+    blocksLoaded = loadBlocks();
     if (blocksLoaded) {
         fillBlocksInInput();
         regenerateScheduleDisplay();
     } else {
         setBlockInputVisible(true);
     }
+    var nowDate = new Date();
+    oldCurrentBlock = getCurrentBlock(nowDate);
+    refreshTimer = setInterval(checkRefresh, 60000) // check for refresh every minute in case current block changes
 }
 
 function initUiElements() {
@@ -214,6 +220,17 @@ function regenerateScheduleDisplay() {
         scheduleDisplayParentElement.replaceChild(newTableElem, scheduleDisplayParentElement.firstChild);
     }
 }
+
+function checkRefresh() {
+    if (!blocksLoaded) return;
+    var nowDate = new Date();
+    var newCurrentBlock = getCurrentBlock(nowDate);
+    if (newCurrentBlock != oldCurrentBlock) {
+        regenerateScheduleDisplay();
+        oldCurrentBlock = newCurrentBlock;
+    }
+}
+    
 
 function equalDates(date, nowDate) {
     return date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && 
