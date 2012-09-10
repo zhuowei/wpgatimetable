@@ -15,12 +15,12 @@ var blockTimesDay1 =
         "end": "9:30"},
      "1" : {
         "begin": "9:30",
-        "end": "10:30"},
+        "end": "10:40"},
      "recess" : {
         "begin": "10:40",
-        "end": "10:50"},
+        "end": "10:55"},
      "advisory" : {
-        "begin": "10:50",
+        "begin": "10:55",
         "end": "11:10"},
      "2" : {
         "begin": "11:10",
@@ -59,6 +59,33 @@ var blockTimesDay2 =
         "end": "14:30"},
      "5" : {
         "begin": "14:30",
+        "end": "15:30"}
+     };
+
+var blockTimesWed = 
+    {"0" : {
+        "begin": "8:20",
+        "end": "9:30"},
+     "1" : {
+        "begin": "9:30",
+        "end": "10:40"},
+     "recess" : {
+        "begin": "10:40",
+        "end": "10:55"},
+     "advisory" : {
+        "begin": "10:55",
+        "end": "11:10"},
+     "2" : {
+        "begin": "11:10",
+        "end": "12:20"},
+     "lunch" : {
+        "begin": "12:20",
+        "end": "13:30"},
+     "3" : {
+        "begin": "13:30",
+        "end": "14:20"},
+     "4" : {
+        "begin": "14:20",
         "end": "15:30"}
      };
 
@@ -116,7 +143,7 @@ function getCurrentBlock(date) {
     var dayWeekZeroIndex = dayWeek - 1;
     var dayType = dayWeekZeroIndex % 2;
     
-    var blockTimes = dayType == 1? blockTimesDay2 : blockTimesDay1;
+    var blockTimes = getBlockTimes(date);
     var curHour = date.getHours(); 
     var curMinute = date.getMinutes();
     //console.log(curHour + ":" + curMinute);
@@ -135,3 +162,10 @@ function getCurrentBlock(date) {
     return null;
 }
 
+function getBlockTimes(date) {
+    var dayWeek = date.getDay();
+    if (dayWeek == 3) return blockTimesWed; //Wednesday: extended lunch
+    var dayWeekZeroIndex = dayWeek - 1;
+    var dayType = dayWeekZeroIndex % 2;
+    return dayType == 1? blockTimesDay2 : blockTimesDay1;
+}

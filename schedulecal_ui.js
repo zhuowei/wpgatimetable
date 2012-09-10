@@ -49,7 +49,7 @@ function generateTableWithBlocks(beginDate) {
             var afternoonRotations = timeTables[c].afternoonRotations;
             //console.log(timeTable);
             var day2 = timeTable.length == 6;
-            var blockTimes = day2? blockTimesDay2 : blockTimesDay1;
+            var blockTimes = getBlockTimes(date);
             var currentBlock = equalDates(nowDate, date) ? getCurrentBlock(nowDate) : null;
             //if (currentBlock != null) console.log(currentBlock);
             var blockIdName;
