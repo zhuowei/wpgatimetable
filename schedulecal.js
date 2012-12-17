@@ -1,10 +1,25 @@
 "use strict";
 
-var yearSchedule = {
+var yearSchedule = {};
+yearSchedule[2012] = {
     begin: {
         year: 2012,
         day: new Date(2012, 8, 3) //September 4
-    }
+    },
+    vacationWeeks: [
+        {
+            displayName: "Winter break", //displayed name in the table
+            begin: new Date(2012, 11, 21), //begin date of the vacation
+            end: new Date(2013, 0, 15), //end date of the vacation
+            weeks: 3 //weeks "skipped" from the schedule. TODO: see if this can be calculated from begin - end
+        }, 
+        {
+            displayName: "Spring break",
+            begin: new Date(2013, 2, 15),
+            end: new Date(2013, 3, 2),
+            weeks: 2
+        }
+    ]
 }
 /* classes IDs begin with 1 */
 var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 3, 6, 4, 5]];
@@ -126,14 +141,32 @@ function getAfternoonRotationsOnWeekType(type) {
 }
 
 function getWeekTypeOnDay(date) {
-    var weeksElapsed = getWeeksElapsedFromTo(yearSchedule.begin.day, date);
+    var weeksElapsed = getWeeksElapsedFromTo(getYearSchedule(date).begin.day, date);
     var weekType = weeksElapsed % 3;
     return weekType;
 }
 
 function getWeeksElapsedFromTo(origDate, date) {
     //TODO vacations
-    return Math.floor((date.getTime() - origDate.getTime()) / 604800000); //1000 * 60 * 60 * 24 *7
+    var rawElapsedWeeks = Math.floor((date.getTime() - origDate.getTime()) / 604800000); //1000 * 60 * 60 * 24 *7
+    for (var i = 0; i < getYearSchedule(date).vacationWeeks.length; i++) {
+        var vacationWeek = getYearSchedule(date).vacationWeeks[i];
+        if (vacationWeek.end.getTime() <= date.getTime()) {
+            rawElapsedWeeks -= vacationWeek.weeks;
+        }
+    }
+    return rawElapsedWeeks;
+}
+
+function getSchoolYear(date) {
+    var yearOfDate = date.getFullYear();
+    if(yearSchedule[yearOfDate] == null || yearSchedule[yearOfDate].begin.day.getTime() > date.getTime()) {
+        return yearOfDate - 1;
+    }
+    return yearOfDate;
+}
+function getYearSchedule(date) {
+    return yearSchedule[getSchoolYear(date)];
 }
 
 function getCurrentBlock(date) {
@@ -168,4 +201,18 @@ function getBlockTimes(date) {
     var dayWeekZeroIndex = dayWeek - 1;
     var dayType = dayWeekZeroIndex % 2;
     return dayType == 1? blockTimesDay2 : blockTimesDay1;
+}
+
+function getVacationOnDay(date) {
+    for (var i = 0; i < getYearSchedule(date).vacationWeeks.length; i++) {
+        var vacationWeek = getYearSchedule(date).vacationWeeks[i];
+        if (vacationWeek.begin.getTime() <= date.getTime() && vacationWeek.end.getTime() > date.getTime()) {
+            return vacationWeek;
+        }
+    }
+    return null;
+}
+
+function isInVacation(date) {
+    return getVacationOnDay(date) != null;
 }

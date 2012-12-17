@@ -60,6 +60,9 @@ function generateTableWithBlocks(beginDate) {
                     date.getDate() == nowDate.getDate()) {
                     tdElem.className += " schedule-table-today";
                 }
+            } else if (isInVacation(date)) {
+                tdElem.textContent = getVacationOnDay(date).displayName;
+                tdElem.className = "schedule-table-recess"
             } else if (r == 1 || r == 2) {
                 buildElem(timeTable, blockTimes, tdElem, r - 1, currentBlock);
             } else if (r == 3) {
@@ -133,7 +136,7 @@ function getBlockAndClassNameForId(id) {
 
 
 function calculatePlease() {
-    var dateOpts = prompt().split("/");
+    var dateOpts = prompt("Enter date: e.g. 2013/3/14").split("/");
     var myDate = new Date(dateOpts[0], dateOpts[1] - 1, dateOpts[2]);
     var myMonday = new Date(dateOpts[0], dateOpts[1] - 1, dateOpts[2] - myDate.getDay() + 1);
     //console.log(myMonday);
@@ -147,12 +150,13 @@ function calculatePlease() {
             console.log(e);
         }
     }*/
-    document.body.appendChild(generateTableWithBlocks(myMonday));
+    currentWeekDate = myMonday;
+    regenerateScheduleDisplay();
 }
 
 function loadHandler() {
     initUiElements();
-    var myDate = new Date() >= yearSchedule.begin.day? new Date() : yearSchedule.begin.day;
+    var myDate = new Date() >= yearSchedule[2012].begin.day? new Date() : yearSchedule[2012].begin.day;
     currentWeekDate = new Date(myDate.getFullYear(), myDate.getMonth(), myDate.getDate() - myDate.getDay() + 1);
     //console.log(currentWeekDate);
     blocksLoaded = loadBlocks();
