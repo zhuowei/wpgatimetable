@@ -21,6 +21,27 @@ yearSchedule[2012] = {
         }
     ]
 }
+
+yearSchedule[2013] = {
+    begin: {
+        year: 2013,
+        day: new Date(2013, 8, 2) //September 2
+    },
+    vacationWeeks: [
+        {
+            displayName: "Winter break", //displayed name in the table
+            begin: new Date(2013, 11, 21), //begin date of the vacation
+            end: new Date(2014, 0, 12), //end date of the vacation
+            weeks: 3 //weeks "skipped" from the schedule. TODO: see if this can be calculated from begin - end
+        }, 
+        {
+            displayName: "Spring break",
+            begin: new Date(2014, 2, 15),
+            end: new Date(2014, 2, 31),
+            weeks: 2
+        }
+    ]
+}
 /* classes IDs begin with 1 */
 var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 3, 6, 4, 5]];
 
