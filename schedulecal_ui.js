@@ -61,7 +61,7 @@ function generateTableWithBlocks(beginDate) {
                     tdElem.className += " schedule-table-today";
                 }
             } else if (isInVacation(date)) {
-                tdElem.textContent = getVacationOnDay(date).displayName;
+                tdElem.innerHTML = getVacationOnDay(date).displayName + "<br>";
                 tdElem.className = "schedule-table-recess"
             } else if (r == 1 || r == 2) {
                 buildElem(timeTable, blockTimes, tdElem, r - 1, currentBlock);
