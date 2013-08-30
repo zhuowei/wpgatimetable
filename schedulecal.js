@@ -43,7 +43,7 @@ yearSchedule[2013] = {
     ]
 }
 /* classes IDs begin with 1 */
-var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 3, 6, 4, 5]];
+var rotations = [[3, 4, 5, 6, 7], [4, 5, 7, 3, 6],[7, 6, 3, 4, 5]];
 
 var blockTimesDay1 = 
     {"0" : {
