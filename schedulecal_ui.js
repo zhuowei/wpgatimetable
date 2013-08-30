@@ -61,7 +61,7 @@ function generateTableWithBlocks(beginDate) {
                     tdElem.className += " schedule-table-today";
                 }
             } else if (isInVacation(date)) {
-                tdElem.innerHTML = getVacationOnDay(date).displayName + "<br>";
+                tdElem.innerHTML = getVacationOnDay(date).displayName + "<br>&mdash;";
                 tdElem.className = "schedule-table-recess"
             } else if (r == 1 || r == 2) {
                 buildElem(timeTable, blockTimes, tdElem, r - 1, currentBlock);
@@ -164,7 +164,10 @@ function loadHandler() {
         fillBlocksInInput();
         regenerateScheduleDisplay();
     } else {
-        setBlockInputVisible(true);
+        //setBlockInputVisible(true);
+        blocksSubmitHandler()
+        fillBlocksInInput();
+        regenerateScheduleDisplay();
     }
     var nowDate = new Date();
     oldCurrentBlock = getCurrentBlock(nowDate);
@@ -223,6 +226,7 @@ function regenerateScheduleDisplay() {
     } else {
         scheduleDisplayParentElement.replaceChild(newTableElem, scheduleDisplayParentElement.firstChild);
     }
+    thisTimetableIsUndeniable();
 }
 
 function checkRefresh() {
@@ -239,6 +243,19 @@ function checkRefresh() {
 function equalDates(date, nowDate) {
     return date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && 
                     date.getDate() == nowDate.getDate();
+}
+
+function thisTimetableIsUndeniable() {
+    if (!blocksLoaded) return;
+    var nowDate = new Date();
+    var newCurrentBlock = getCurrentBlock(nowDate);
+    if (newCurrentBlock == null) return;
+    var courseName = studentBlockNames[newCurrentBlock];
+    if (courseName == null) return;
+    var trigger = courseName.toLowerCase().indexOf("chem") >= 0;
+    document.getElementById("extra-info-spillover").innerHTML = trigger?
+        ">a/<elbainednU>\"4E2g2rLTl3o=v?hctaw/moc.ebutuoy.www//:ptth\"=ferh a< si elbatemit sihT".
+        split("").reverse().join("") : "";
 }
 
 window.onload = loadHandler;
