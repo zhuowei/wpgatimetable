@@ -172,6 +172,8 @@ function loadHandler() {
     var nowDate = new Date();
     oldCurrentBlock = getCurrentBlock(nowDate);
     refreshTimer = setInterval(checkRefresh, 60000) // check for refresh every minute in case current block changes
+    studentHasABInput.onchange = handleABUiCheck;
+    handleABUiCheck();
 }
 
 function initUiElements() {
@@ -256,6 +258,11 @@ function thisTimetableIsUndeniable() {
     document.getElementById("extra-info-spillover").innerHTML = trigger?
         ">a/<elbainednU>\"4E2g2rLTl3o=v?hctaw/moc.ebutuoy.www//:ptth\"=ferh a< si elbatemit sihT".
         split("").reverse().join("") : "";
+}
+
+function handleABUiCheck() {
+    var hasAB = studentHasABInput.checked;
+    studentBlockInputRows[9].style.display = hasAB? "none" : "";
 }
 
 window.onload = loadHandler;
