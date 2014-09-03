@@ -1,27 +1,6 @@
 "use strict";
 
 var yearSchedule = {};
-yearSchedule[2012] = {
-    begin: {
-        year: 2012,
-        day: new Date(2012, 8, 3) //September 4
-    },
-    vacationWeeks: [
-        {
-            displayName: "Winter break", //displayed name in the table
-            begin: new Date(2012, 11, 21), //begin date of the vacation
-            end: new Date(2013, 0, 15), //end date of the vacation
-            weeks: 3 //weeks "skipped" from the schedule. TODO: see if this can be calculated from begin - end
-        }, 
-        {
-            displayName: "Spring break",
-            begin: new Date(2013, 2, 15),
-            end: new Date(2013, 3, 2),
-            weeks: 2
-        }
-    ]
-}
-
 yearSchedule[2013] = {
     begin: {
         year: 2013,
@@ -38,6 +17,27 @@ yearSchedule[2013] = {
             displayName: "Spring break",
             begin: new Date(2014, 2, 15),
             end: new Date(2014, 2, 31),
+            weeks: 2
+        }
+    ]
+}
+
+yearSchedule[2014] = {
+    begin: {
+        year: 2014,
+        day: new Date(2014, 8, 1) //September 1 (first monday)
+    },
+    vacationWeeks: [
+        {
+            displayName: "Winter break", //displayed name in the table
+            begin: new Date(2014, 11, 20), //begin date of the vacation
+            end: new Date(2015, 0, 11), //end date of the vacation
+            weeks: 3 //weeks "skipped" from the schedule. TODO: see if this can be calculated from begin - end
+        }, 
+        {
+            displayName: "Spring break",
+            begin: new Date(2015, 2, 14),
+            end: new Date(2015, 2, 29),
             weeks: 2
         }
     ]
