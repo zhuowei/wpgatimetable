@@ -156,7 +156,7 @@ function calculatePlease() {
 
 function loadHandler() {
     initUiElements();
-    var myDate = new Date() >= yearSchedule[2013].begin.day? new Date() : yearSchedule[2013].begin.day;
+    var myDate = new Date();
     currentWeekDate = new Date(myDate.getFullYear(), myDate.getMonth(), myDate.getDate() - myDate.getDay() + 1);
     //console.log(currentWeekDate);
     blocksLoaded = loadBlocks();
